@@ -92,7 +92,7 @@ test:
 $(TRG_FILE): $(SOF_FILE)
 	@if not exist $(BIN_DIR) mkdir $(BIN_DIR)	
 	@if exist $(TRG_FILE) del /Q/ F $(TRG_FILE)	
-	copy $(SOF_FILE) $(TRG_FILE) > nul
+	@copy $(SOF_FILE) $(TRG_FILE) > nul
 
 $(SOF_FILE): $(QSF_FILE) $(CMD_DEPS) $(CMD_DEPS_BLD) $(CMD_DEPS_PRJ)
 	$(QUARTUS_BIN_DIR)/$(QUARTUS_SHELL) -t $(SCRIPT_DIR)/$(PRJ_BUILD_SCRIPT) $(OUT_CFG_DIR) $(PRJ_NAME) $(TARGET_FILE_NAME)
