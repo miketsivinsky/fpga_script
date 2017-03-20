@@ -16,7 +16,7 @@ else
 endif
 
 #------------------------------------------------------------------------------
-ifeq ($(GOALS),$(filter $(GOALS), all build_prj prg_sof))
+ifeq ($(GOALS),$(filter $(GOALS), all build_prj load_dev))
  define make_call
   @taskkill /FI "WINDOWTITLE eq $(strip $(1))" > nul
   @cd $(abspath $(2)) && cmd /C start "$(strip $(1))" cmd /T:87 /K make $(3)
