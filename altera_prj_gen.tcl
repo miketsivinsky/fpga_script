@@ -14,7 +14,7 @@ set SCRIPT_DIR        [lindex $argv 0]
 set SRC_DIR           [lindex $argv 1]
 set OUT_CFG_DIR       [lindex $argv 2]
 set PRJ_NAME          [lindex $argv 3]
-set TARGET_FILE_NAME  [lindex $argv 4]
+set PRJ_FILE_NAME     [lindex $argv 4]
 #-----------------------------------
 source $SCRIPT_DIR/cfg_header_gen.tcl
 
@@ -27,7 +27,7 @@ set srcFileNum [expr $argc - $srcFileListStart]
 set srcFileList [lrange $argv $srcFileListStart end]
 
 #-----------------------------------
-project_new [file normalize ${OUT_CFG_DIR}/${TARGET_FILE_NAME}]
+project_new [file normalize ${OUT_CFG_DIR}/${PRJ_FILE_NAME}]
 
 #-----------------------------------
 source ${CFG_DIR}/settings.tcl
@@ -40,8 +40,8 @@ cfg_header_gen $CFG_DIR "QUARTUS"
 #-----------------------------------
 set_global_assignment -name SEARCH_PATH  ${CFG_DIR}
 set_global_assignment -name SEARCH_PATH  ${SRC_DIR}
-#set_global_assignment -name HTML_REPORT_FILE ${TARGET_FILE_NAME}
-set_global_assignment -name TEXT_FORMAT_REPORT_FILE ${TARGET_FILE_NAME}
+#set_global_assignment -name HTML_REPORT_FILE ${PRJ_FILE_NAME}
+set_global_assignment -name TEXT_FORMAT_REPORT_FILE ${PRJ_FILE_NAME}
 
 #-----------------------------------
 
@@ -73,6 +73,5 @@ if {$DEBUG_INFO == 1} {
 	puts "SCRIPT_DIR:       $SCRIPT_DIR"
 	puts "SRC_DIR:          $SRC_DIR"
 	puts "OUT_CFG_DIR:      $OUT_CFG_DIR"
-	puts "PRJ_NAME:         $PRJ_NAME"
-	puts "TARGET_FILE_NAME: $TARGET_FILE_NAME"
+	puts "PRJ_FILE_NAME:    $PRJ_FILE_NAME"
 }

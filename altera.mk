@@ -9,8 +9,8 @@ OUT_CFG_DIR     := $(OUT_DIR)/$(CFG_NAME)
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
-PRJ_GEN_SCRIPT   := altera_prj_gen.tcl
-PRJ_BUILD_SCRIPT := altera_prj_build.tcl
+PRJ_GEN_SCRIPT := altera_prj_gen.tcl
+OUT_GEN_SCRIPT := altera_prj_build.tcl
 
 #------------------------------------------------------------------------------
 ifeq ($(QUARTUS),16.1)
@@ -23,7 +23,6 @@ endif
 
 #------------------------------------------------------------------------------
 PRJ_SHELL          := quartus_sh
-PRJ_SHELL_CMD_LINE := -t
 PGM_SHELL          := quartus_pgm
 
 #------------------------------------------------------------------------------
@@ -41,11 +40,17 @@ BIN_DIR     := $(call fixPath, $(abspath $(BIN_DIR)))
 SCRIPT_DIR  := $(call fixPath, $(abspath $(SCRIPT_DIR)))
 
 #------------------------------------------------------------------------------
+PRJ_FILE_CMD_LINE := -t $(SCRIPT_DIR)/$(PRJ_GEN_SCRIPT)
+OUT_FILE_CMD_LINE := -t $(SCRIPT_DIR)/$(OUT_GEN_SCRIPT)
+
+#------------------------------------------------------------------------------
 ifndef PRJ_NAME
 	PRJ_NAME := $(notdir $(SRC_DIR))
 endif
 
 #------------------------------------------------------------------------------
+PRJ_FILE_NAME    := $(PRJ_NAME)-$(CFG_NAME)
+OUT_FILE_NAME    := $(PRJ_NAME)-$(CFG_NAME)
 TARGET_FILE_NAME := $(PRJ_NAME)-$(CFG_NAME)
 
 
@@ -54,14 +59,13 @@ INC            := $(abspath $(INC))
 SRC            := $(abspath $(SRC)) 
 
 SRC_DEPS       := $(call fixPath, $(SRC)) $(call fixPath, $(INC)) $(call fixPath, $(SDC))
-PRJ_FILE       := $(call fixPath, $(abspath $(OUT_CFG_DIR)/$(TARGET_FILE_NAME).qsf)) 
-OUT_FILE       := $(call fixPath, $(abspath $(OUT_CFG_DIR)/$(TARGET_FILE_NAME).sof)) 
+PRJ_FILE       := $(call fixPath, $(abspath $(OUT_CFG_DIR)/$(PRJ_FILE_NAME).qsf)) 
+OUT_FILE       := $(call fixPath, $(abspath $(OUT_CFG_DIR)/$(OUT_FILE_NAME).sof)) 
 TRG_FILE       := $(call fixPath, $(abspath $(BIN_DIR)/$(TARGET_FILE_NAME).sof)) 
 
 CMD_DEPS     := $(SCRIPT_DIR)/altera.mk makefile
 CMD_DEPS_PRJ := $(SCRIPT_DIR)/altera_prj_gen.tcl groups.tcl settings.tcl signals.tcl
 CMD_DEPS_BLD := $(SCRIPT_DIR)/altera_prj_build.tcl
-
 
 ifneq ($(wildcard cfg_params.tcl),)
  CMD_DEPS_PRJ := $(CMD_DEPS_PRJ) cfg_params.tcl
@@ -100,11 +104,10 @@ $(TRG_FILE): $(OUT_FILE)
 	@copy $(OUT_FILE) $(TRG_FILE) > nul
 
 $(OUT_FILE): $(PRJ_FILE) $(CMD_DEPS) $(CMD_DEPS_BLD) $(CMD_DEPS_PRJ)
-	$(SHELL_DIR)/$(PRJ_SHELL) -t $(SCRIPT_DIR)/$(PRJ_BUILD_SCRIPT) $(OUT_CFG_DIR) $(PRJ_NAME) $(TARGET_FILE_NAME)
+	$(SHELL_DIR)/$(PRJ_SHELL)  $(OUT_FILE_CMD_LINE) $(OUT_CFG_DIR) $(PRJ_FILE_NAME)
 
 $(PRJ_FILE): $(SRC_DEPS) $(CMD_DEPS) $(CMD_DEPS_PRJ)
 	@if not exist $(OUT_DIR) mkdir $(OUT_DIR)	
 	@if exist $(OUT_CFG_DIR) rmdir /s/q $(OUT_CFG_DIR)	
 	mkdir $(OUT_CFG_DIR)
-	$(SHELL_DIR)/$(PRJ_SHELL) $(PRJ_SHELL_CMD_LINE) $(SCRIPT_DIR)/$(PRJ_GEN_SCRIPT) $(SCRIPT_DIR) $(SRC_DIR) $(OUT_CFG_DIR) $(PRJ_NAME) $(TARGET_FILE_NAME) $(SRC) $(SDC)
-	
+	$(SHELL_DIR)/$(PRJ_SHELL) $(PRJ_FILE_CMD_LINE) $(SCRIPT_DIR) $(SRC_DIR) $(OUT_CFG_DIR) $(PRJ_NAME) $(PRJ_FILE_NAME) $(SRC) $(SDC)
