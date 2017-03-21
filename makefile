@@ -2,11 +2,12 @@
 #--------------------------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
-LED_BLINK_ALTERA_SOC := ../src/-cfg/altera_SoC
-LED_BLINK_ALTERA_DE1 := ../src/-cfg/altera_DE1
+LED_BLINK_ALTERA_SOC  := ../src/-cfg/altera_SoC
+LED_BLINK_ALTERA_DE1  := ../src/-cfg/altera_DE1
+LED_BLINK_XILINX_ARTY := ../src/-cfg/xilinx_Arty
 
 #------------------------------------------------------------------------------
-TRG_LIST := LED_BLINK_ALTERA_SOC LED_BLINK_ALTERA_DE1
+TRG_LIST := LED_BLINK_ALTERA_SOC LED_BLINK_ALTERA_DE1 LED_BLINK_XILINX_ARTY
 
 #------------------------------------------------------------------------------
 ifeq ($(MAKECMDGOALS),)
@@ -16,7 +17,7 @@ else
 endif
 
 #------------------------------------------------------------------------------
-ifeq ($(GOALS),$(filter $(GOALS), all build_prj load_dev))
+ifeq ($(GOALS),$(filter $(GOALS), all build_prj))
  define make_call
   @taskkill /FI "WINDOWTITLE eq $(strip $(1))" > nul
   @cd $(abspath $(2)) && cmd /C start "$(strip $(1))" cmd /T:87 /K make $(3)
