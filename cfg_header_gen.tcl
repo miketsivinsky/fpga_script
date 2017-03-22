@@ -1,6 +1,6 @@
 #*******************************************************************************
 #*******************************************************************************
-proc cfg_header_gen {CFG_DIR BUILD_TOOL} {
+proc cfg_header_gen {PRJ_NAME CFG_DIR BUILD_TOOL} {
 	#-----------------------------------
 	set DEBUG_INFO 0
 
@@ -18,8 +18,15 @@ proc cfg_header_gen {CFG_DIR BUILD_TOOL} {
 	puts $prjDefFile [format "`define %s\n"  $guardName];
 
 	#-----------------------------------
-	puts $prjDefFile [format "//--- automatically define section"];
-	puts $prjDefFile [format "`define $BUILD_TOOL\n"];
+	puts $prjDefFile [format "//--- automatically define section\n"];
+	puts $prjDefFile [format "// synopsys translate_off"];
+	puts $prjDefFile [format "`define SIMULATOR"];
+	puts $prjDefFile [format "// synopsys translate_on"];
+	puts $prjDefFile [format ""];
+	puts $prjDefFile [format "`define PRJ_NAME_[string toupper $PRJ_NAME]"];
+	puts $prjDefFile [format "`define CFG_NAME_[string toupper [file tail $CFG_DIR]]"];
+	puts $prjDefFile [format "`define BUILD_TOOL_$BUILD_TOOL"];
+	puts $prjDefFile [format ""];
 	if {[file exists $CFG_PARAMS_FILE] == 1} {
 		puts $prjDefFile [format "//--- user define section"];
 		source $CFG_PARAMS_FILE

@@ -35,7 +35,7 @@ source ${CFG_DIR}/signals.tcl
 source ${CFG_DIR}/groups.tcl
 
 #-----------------------------------
-cfg_header_gen $CFG_DIR "QUARTUS"
+cfg_header_gen $PRJ_NAME $CFG_DIR "QUARTUS"
 
 #-----------------------------------
 set_global_assignment -name SEARCH_PATH  ${CFG_DIR}

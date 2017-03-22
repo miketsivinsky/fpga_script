@@ -66,7 +66,7 @@ OUT_FILE       := $(call fixPath, $(abspath $(OUT_CFG_DIR)/$(PRJ_NAME)-$(CFG_NAM
 TRG_FILE       := $(call fixPath, $(abspath $(BIN_DIR)/$(TARGET_FILE_NAME).bit))
 
 CMD_DEPS     := $(SCRIPT_DIR)/xilinx.mk makefile
-CMD_DEPS_PRJ := $(SCRIPT_DIR)/xilinx_prj_gen.tcl settings.tcl
+CMD_DEPS_PRJ := $(SCRIPT_DIR)/xilinx_prj_gen.tcl $(SCRIPT_DIR)/cfg_header_gen.tcl settings.tcl
 CMD_DEPS_BLD := $(SCRIPT_DIR)/xilinx_prj_build.tcl
 CMD_DEPS_PRG := $(SCRIPT_DIR)/xilinx_dev_pgm.tcl
 

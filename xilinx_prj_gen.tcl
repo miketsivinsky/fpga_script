@@ -86,7 +86,7 @@ foreach src $srcXDC {
 source ${CFG_DIR}/settings.tcl
 
 #-----------------------------------
-cfg_header_gen $CFG_DIR "VIVADO"
+cfg_header_gen $PRJ_NAME $CFG_DIR "VIVADO"
 
 #-----------------------------------
 #--- TEST (begin)

@@ -66,7 +66,7 @@ OUT_FILE       := $(call fixPath, $(abspath $(OUT_CFG_DIR)/$(OUT_FILE_NAME).sof)
 TRG_FILE       := $(call fixPath, $(abspath $(BIN_DIR)/$(TARGET_FILE_NAME).sof)) 
 
 CMD_DEPS     := $(SCRIPT_DIR)/altera.mk makefile
-CMD_DEPS_PRJ := $(SCRIPT_DIR)/altera_prj_gen.tcl groups.tcl settings.tcl signals.tcl
+CMD_DEPS_PRJ := $(SCRIPT_DIR)/altera_prj_gen.tcl $(SCRIPT_DIR)/cfg_header_gen.tcl groups.tcl settings.tcl signals.tcl
 CMD_DEPS_BLD := $(SCRIPT_DIR)/altera_prj_build.tcl
 CMD_DEPS_PRG := 
 
