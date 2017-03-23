@@ -6,8 +6,14 @@ LED_BLINK_ALTERA_SOC  := ../src/-cfg/altera_SoC
 LED_BLINK_ALTERA_DE1  := ../src/-cfg/altera_DE1
 LED_BLINK_XILINX_ARTY := ../src/-cfg/xilinx_Arty
 
+TQ1M_ALTERA_SOC  := ../test/tq1m/-syn/-cfg/altera_SoC
+TQ1M_ALTERA_DE1  := ../test/tq1m/-syn/-cfg/altera_DE1
+
+
 #------------------------------------------------------------------------------
-TRG_LIST := LED_BLINK_ALTERA_SOC LED_BLINK_ALTERA_DE1 LED_BLINK_XILINX_ARTY
+#TRG_LIST := LED_BLINK_ALTERA_SOC LED_BLINK_ALTERA_DE1 LED_BLINK_XILINX_ARTY
+TRG_LIST := TQ1M_ALTERA_SOC TQ1M_ALTERA_DE1
+#TRG_LIST := TQ1M_ALTERA_SOC
 
 #------------------------------------------------------------------------------
 ifeq ($(MAKECMDGOALS),)
@@ -30,7 +36,7 @@ else
 endif
 
 #------------------------------------------------------------------------------
-$(GOALS):
+$(GOALS): 
 	$(foreach TRG, $(TRG_LIST), $(call make_call, $(TRG),$($(TRG)), $(GOALS) ) & )	
 
 #------------------------------------------------------------------------------

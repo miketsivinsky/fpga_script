@@ -5,9 +5,11 @@ package require ::quartus::project
 #-----------------------------------
 set DEBUG_INFO 1
 
-set sfxSV  *.sv
-set sfxV   *.v
-set sfxSDC *.sdc
+set sfx_sv   *.sv
+set sfx_v    *.v
+set sfx_sdc  *.sdc
+set sfx_qip  *.qip
+set sfx_qsys *.qsys
 
 #-----------------------------------
 set SCRIPT_DIR        [lindex $argv 0]
@@ -46,21 +48,33 @@ set_global_assignment -name TEXT_FORMAT_REPORT_FILE ${PRJ_FILE_NAME}
 #-----------------------------------
 
 #--- SystemVerilog file list
-set srcSV [lsearch -all -inline $srcFileList $sfxSV]
-foreach src $srcSV {
+set src_sv [lsearch -all -inline $srcFileList $sfx_sv]
+foreach src $src_sv {
 	set_global_assignment -name SYSTEMVERILOG_FILE $src
 } 
 
 #--- Verilog file list
-set srcV  [lsearch -all -inline $srcFileList $sfxV]
-foreach src $srcV {
+set src_v  [lsearch -all -inline $srcFileList $sfx_v]
+foreach src $src_v {
 	set_global_assignment -name VERILOG_FILE $src
 } 
 
 #--- SDC file list
-set srcSDC  [lsearch -all -inline $srcFileList $sfxSDC]
-foreach src $srcSDC {
+set src_sdc  [lsearch -all -inline $srcFileList $sfx_sdc]
+foreach src $src_sdc {
 	set_global_assignment -name SDC_FILE ${CFG_DIR}/$src
+} 
+
+#--- QIP file list
+set src_qip  [lsearch -all -inline $srcFileList $sfx_qip]
+foreach src $src_qip {
+	set_global_assignment -name QIP_FILE $src
+} 
+
+#--- QSYS file list
+set src_qsys  [lsearch -all -inline $srcFileList $sfx_qsys]
+foreach src $src_qsys {
+	set_global_assignment -name QSYS_FILE $src
 } 
 
 #-----------------------------------
@@ -75,3 +89,4 @@ if {$DEBUG_INFO == 1} {
 	puts "OUT_CFG_DIR:      $OUT_CFG_DIR"
 	puts "PRJ_FILE_NAME:    $PRJ_FILE_NAME"
 }
+
