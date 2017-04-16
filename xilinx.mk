@@ -6,9 +6,11 @@ BIN_DIR         := $(REF_DIR)/bin
 
 OUT_DIR         := $(SRC_DIR)/-out
 OUT_CFG_DIR     := $(OUT_DIR)/$(CFG_NAME)
+OUT_IP_DIR      := $(OUT_CFG_DIR)/-ip
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
+IP_BLD_SCRIPT  := xilinx_ip_bld.tcl
 PRJ_GEN_SCRIPT := xilinx_prj_gen.tcl
 OUT_GEN_SCRIPT := xilinx_prj_build.tcl
 DEV_PGM_SCRIPT := xilinx_dev_pgm.tcl
@@ -34,16 +36,22 @@ else
 endif
 
 #------------------------------------------------------------------------------
-SRC_DIR     := $(abspath $(SRC_DIR))
-OUT_DIR     := $(call fixPath, $(OUT_DIR))
-OUT_CFG_DIR := $(call fixPath, $(OUT_CFG_DIR))
-BIN_DIR     := $(call fixPath, $(abspath $(BIN_DIR)))
-SCRIPT_DIR  := $(call fixPath, $(abspath $(SCRIPT_DIR)))
+SRC_DIR         := $(abspath $(SRC_DIR))
+OUT_DIR         := $(call fixPath, $(OUT_DIR))
+OUT_CFG_DIR     := $(call fixPath, $(OUT_CFG_DIR))
+OUT_IP_DIR      := $(call fixPath, $(OUT_IP_DIR))
+BIN_DIR         := $(call fixPath, $(abspath $(BIN_DIR)))
+SCRIPT_DIR      := $(call fixPath, $(abspath $(SCRIPT_DIR)))
 
 #------------------------------------------------------------------------------
 PRJ_FILE_CMD_LINE := -mode batch -journal $(OUT_CFG_DIR)/$(PRJ_NAME)-prj.jou -log $(OUT_CFG_DIR)/$(PRJ_NAME)-prj.log -source $(SCRIPT_DIR)/$(PRJ_GEN_SCRIPT) -notrace
 OUT_FILE_CMD_LINE := -mode batch -journal $(OUT_CFG_DIR)/$(PRJ_NAME)-out.jou -log $(OUT_CFG_DIR)/$(PRJ_NAME)-out.log -source $(SCRIPT_DIR)/$(OUT_GEN_SCRIPT) -notrace
 DEV_PGM_CMD_LINE  := -mode batch -journal $(OUT_CFG_DIR)/$(PRJ_NAME)-pgm.jou -log $(OUT_CFG_DIR)/$(PRJ_NAME)-pgm.log -source $(SCRIPT_DIR)/$(DEV_PGM_SCRIPT) -notrace
+
+#---
+define ip_bld_cmd
+ $(SHELL_DIR)/$(PRJ_SHELL) -mode batch -journal $(OUT_CFG_DIR)/$(PRJ_NAME)-ip-$(patsubst %.tcl,%,$(notdir $(1))).jou -log $(OUT_CFG_DIR)/$(PRJ_NAME)-ip$(patsubst %.tcl,%,$(notdir $(1))).log -source $(SCRIPT_DIR)/$(IP_BLD_SCRIPT) -notrace
+endef
 
 #------------------------------------------------------------------------------
 ifndef PRJ_NAME
@@ -59,6 +67,7 @@ TARGET_FILE_NAME := $(PRJ_NAME)-$(CFG_NAME)
 #------------------------------------------------------------------------------
 INC            := $(abspath $(INC)) 
 SRC            := $(abspath $(SRC)) 
+CFG_IP         := $(abspath $(CFG_IP)) 
 
 SRC_DEPS       := $(call fixPath, $(SRC)) $(call fixPath, $(INC)) $(call fixPath, $(SDC))
 PRJ_FILE       := $(call fixPath, $(abspath $(OUT_CFG_DIR)/$(PRJ_FILE_NAME).xpr)) 
@@ -73,6 +82,14 @@ CMD_DEPS_PRG := $(SCRIPT_DIR)/xilinx_dev_pgm.tcl
 ifneq ($(wildcard cfg_params.tcl),)
  CMD_DEPS_PRJ := $(CMD_DEPS_PRJ) cfg_params.tcl
 endif
+
+#---
+#OUT_IP     := $(foreach ip_src, $(patsubst %.tcl,%,$(CFG_IP)), $(OUT_IP_DIR)/$(ip_src)/$(ip_src).xcix)
+
+OUT_IP     := $(foreach ip_src, $(notdir $(CFG_IP)), $(OUT_IP_DIR)/$(ip_src)/$(ip_src).xcix)
+OUT_IP     := $(abspath $(OUT_IP)) 
+#---
+
 
 #------------------------------------------------------------------------------
 .PHONY: all dev_pgm build_prj create_prj clean clean_all print-% test
@@ -102,6 +119,12 @@ print-%:
 test:
 	@echo test $(TARGET_FILE_NAME)	
 
+test2:  | $(OUT_IP_DIR)
+	@echo $(CFG_IP) $(OUT_IP)
+
+test3:	$(OUT_IP)
+		
+
 #------------------------------------------------------------------------------
 $(TRG_FILE): $(OUT_FILE)
 	@if not exist $(BIN_DIR) mkdir $(BIN_DIR)	
@@ -118,3 +141,14 @@ $(PRJ_FILE): $(SRC_DEPS) $(CMD_DEPS) $(CMD_DEPS_PRJ)
 	@if exist $(OUT_CFG_DIR) rmdir /s/q $(OUT_CFG_DIR)	
 	mkdir $(OUT_CFG_DIR)
 	$(SHELL_DIR)/$(PRJ_SHELL) $(PRJ_FILE_CMD_LINE) -tclargs $(SCRIPT_DIR) $(SRC_DIR) $(OUT_CFG_DIR) $(PRJ_NAME) $(TARGET_FILE_NAME) $(SRC) $(SDC)
+
+.SECONDEXPANSION:
+PERCENT = %
+$(OUT_IP): %.xcix : $$(filter $$(PERCENT)$$(notdir $$*), $$(CFG_IP)).tcl | $(OUT_IP_DIR)
+	$(call ip_bld_cmd, $^ ) -tclargs $^ $@ 
+
+#------------------------------------------------------------------------------
+$(OUT_IP_DIR):
+	mkdir $(OUT_IP_DIR)
+
+
