@@ -40,6 +40,7 @@ set SRC_DIR           [lindex $argv 1]
 set OUT_CFG_DIR       [lindex $argv 2]
 set PRJ_NAME          [lindex $argv 3]
 set TARGET_FILE_NAME  [lindex $argv 4]
+set DEVICE            [lindex $argv 5]
 
 #-----------------------------------
 source $SCRIPT_DIR/cfg_header_gen.tcl
@@ -48,7 +49,7 @@ source $SCRIPT_DIR/cfg_header_gen.tcl
 set CFG_DIR [pwd]
 
 #-----------------------------------
-set srcFileListStart 5
+set srcFileListStart 6
 set srcFileNum [expr $argc - $srcFileListStart]
 set srcFileList [lrange $argv $srcFileListStart end]
 
@@ -83,6 +84,7 @@ foreach src $src_xdc {
 } 
 
 #-----------------------------------
+set_property part ${DEVICE} [current_project]
 source ${CFG_DIR}/settings.tcl
 
 #-----------------------------------
@@ -119,5 +121,6 @@ if {$DEBUG_INFO == 1} {
 	puts "OUT_CFG_DIR:      $OUT_CFG_DIR"
 	puts "PRJ_NAME:         $PRJ_NAME"
 	puts "TARGET_FILE_NAME: $TARGET_FILE_NAME"
+	puts "DEVICE:           $DEVICE"
 }
 

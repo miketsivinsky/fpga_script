@@ -3,6 +3,7 @@
 CFG_NAME        := $(notdir $(CURDIR))
 SCRIPT_DIR      := $(REF_DIR)/script
 BIN_DIR         := $(REF_DIR)/bin
+IP_LIB_DIR      := $(REF_DIR)/ip
 
 OUT_DIR         := $(SRC_DIR)/-out
 OUT_CFG_DIR     := $(OUT_DIR)/$(CFG_NAME)
@@ -36,6 +37,7 @@ else
 endif
 
 #------------------------------------------------------------------------------
+IP_LIB_DIR      := $(abspath $(IP_LIB_DIR))
 SRC_DIR         := $(abspath $(SRC_DIR))
 OUT_DIR         := $(call fixPath, $(OUT_DIR))
 OUT_CFG_DIR     := $(call fixPath, $(OUT_CFG_DIR))
@@ -105,6 +107,8 @@ build_prj:  $(TRG_FILE)
 
 create_prj: $(PRJ_FILE)
 
+build_ip:   $(OUT_IP)
+
 clean:
 	@if exist $(OUT_CFG_DIR) rmdir /s/q $(OUT_CFG_DIR)	
 	@if exist $(TRG_FILE) del /F /Q $(TRG_FILE)
@@ -119,10 +123,6 @@ print-%:
 test:
 	@echo test $(TARGET_FILE_NAME)	
 
-test2:  | $(OUT_IP_DIR)
-	@echo $(CFG_IP) $(OUT_IP)
-
-test3:	$(OUT_IP)
 		
 
 #------------------------------------------------------------------------------
@@ -140,12 +140,12 @@ $(PRJ_FILE): $(SRC_DEPS) $(CMD_DEPS) $(CMD_DEPS_PRJ)
 	@if not exist $(OUT_DIR) mkdir $(OUT_DIR)	
 	@if exist $(OUT_CFG_DIR) rmdir /s/q $(OUT_CFG_DIR)	
 	mkdir $(OUT_CFG_DIR)
-	$(SHELL_DIR)/$(PRJ_SHELL) $(PRJ_FILE_CMD_LINE) -tclargs $(SCRIPT_DIR) $(SRC_DIR) $(OUT_CFG_DIR) $(PRJ_NAME) $(TARGET_FILE_NAME) $(SRC) $(SDC)
+	$(SHELL_DIR)/$(PRJ_SHELL) $(PRJ_FILE_CMD_LINE) -tclargs $(SCRIPT_DIR) $(SRC_DIR) $(OUT_CFG_DIR) $(PRJ_NAME) $(TARGET_FILE_NAME) $(DEVICE) $(SRC) $(SDC)
 
 .SECONDEXPANSION:
 PERCENT = %
 $(OUT_IP): %.xcix : $$(filter $$(PERCENT)$$(notdir $$*), $$(CFG_IP)).tcl | $(OUT_IP_DIR)
-	$(call ip_bld_cmd, $^ ) -tclargs $^ $@ 
+	$(call ip_bld_cmd, $^ ) -tclargs $^ $@ $(DEVICE) $(IP_LIB_DIR)
 
 #------------------------------------------------------------------------------
 $(OUT_IP_DIR):
