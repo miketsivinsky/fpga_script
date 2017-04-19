@@ -43,6 +43,21 @@ set TARGET_FILE_NAME  [lindex $argv 4]
 set DEVICE            [lindex $argv 5]
 
 #-----------------------------------
+if {[file exists ${OUT_CFG_DIR}]} {
+	set files [glob -nocomplain -tail -directory ${OUT_CFG_DIR} *]
+	set fileToDelete [lsearch -regexp -not -all -inline $files "^-ip$"]
+	set fileToDelete [lsearch -regexp -not -all -inline $fileToDelete "^((?!backup).)*.(\.log|\.jou)$"]
+	#set fileList2 [lsearch -regexp -all -inline $files "^${PRJ_NAME}-prj(\.log|\.jou)$"]
+	#set fileToDelete [concat $fileList1 $fileList2]
+	foreach f $fileToDelete {
+		file delete -force ${OUT_CFG_DIR}/$f
+		#puts "slon: $f"
+ 	}
+} else {
+	file mkdir ${OUT_CFG_DIR}	
+}
+
+#-----------------------------------
 source $SCRIPT_DIR/cfg_header_gen.tcl
 
 #-----------------------------------

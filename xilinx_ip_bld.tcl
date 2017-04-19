@@ -14,7 +14,7 @@ set IP_LIB_DIR        [lindex $argv 3]
 set CFG_DIR [pwd]
 
 #-----------------------------------
-set ipCoreOutDir  [file dirname $IP_OUT]
+set ipCoreOutDir  $IP_OUT
 set ipCoreName    [file rootname [file tail $IP_CFG]]
 
 if { [file exists $ipCoreOutDir]} {
