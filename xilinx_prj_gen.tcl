@@ -2,6 +2,28 @@
 #*******************************************************************************
 
 #------------------------------------------------------------------------------
+proc gen_ip_lists { srcFileList }  {
+	set ipLists [dict create xcix {} xci {} bd {}]
+	foreach srcFile $srcFileList {
+		set srcFileTail [file tail $srcFile]
+		if {![string match *.* $srcFileTail]} {
+			#---
+			set xcixFile ${srcFile}/${srcFileTail}.xcix
+			set xciFile  ${srcFile}/${srcFileTail}/${srcFileTail}.xci
+			#---
+	        	if {[file exists $xcixFile]} {
+				dict lappend ipLists xcix ${xcixFile}
+                	}
+			#---
+	        	if {[file exists $xciFile]} {
+				dict lappend ipLists xci ${xciFile}
+                	}
+        	}
+	}
+	return $ipLists
+}
+
+#------------------------------------------------------------------------------
 proc gen_prj_struct { prjName } {
     set nRuns 1
     for {set i 1} { $i <= $nRuns} { incr i} {
@@ -27,12 +49,12 @@ proc gen_prj_struct { prjName } {
 #*******************************************************************************
 
 #-----------------------------------
-set DEBUG_INFO 1
+set DEBUG_INFO 0
 
-set sfx_sv  *.sv
-set sfx_v   *.v
-set sfx_sdc *.sdc
-set sfx_xdc *.xdc
+set sfx_sv   *.sv
+set sfx_v    *.v
+set sfx_sdc  *.sdc
+set sfx_xdc  *.xdc
 
 #-----------------------------------
 set SCRIPT_DIR        [lindex $argv 0]
@@ -68,6 +90,8 @@ set srcFileListStart 6
 set srcFileNum [expr $argc - $srcFileListStart]
 set srcFileList [lrange $argv $srcFileListStart end]
 
+#---
+
 #-----------------------------------
 create_project ${TARGET_FILE_NAME} [file normalize ${OUT_CFG_DIR}] 
 gen_prj_struct ${PRJ_NAME}
@@ -97,6 +121,15 @@ set src_xdc  [lsearch -all -inline $srcFileList $sfx_xdc]
 foreach src $src_xdc {
 	add_files -fileset constrs_1 -norecurse $src
 } 
+
+#--- IP and BD files
+set ipLists [gen_ip_lists ${srcFileList}]
+
+foreach ip_xcix [dict get $ipLists xcix] {
+	read_ip $ip_xcix
+#	puts "ip_xcix: $ip_xcix"
+}
+
 
 #-----------------------------------
 set_property part ${DEVICE} [current_project]
