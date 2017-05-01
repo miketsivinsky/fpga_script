@@ -52,7 +52,7 @@ source $IP_CFG
 if { [dict get [ipInfo] isSynth] } {
 	ipGenPrologue ${ipCoreName} ${ipCoreOutDir} ${DEVICE} "ipInfo"
 	ipCfgPrologue ${ipCoreName} ${ipCoreOutDir}
-	ipUserCfg     ${ipCoreName} ${ipCoreOutDir}
+	ipUserCfg     ${ipCoreName} ${ipCoreOutDir} ${CFG_DIR}
 	ipGenEpilogue ${ipCoreName} ${ipCoreOutDir}
 
 } else {
