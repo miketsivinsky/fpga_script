@@ -1,4 +1,3 @@
-
 #*******************************************************************************
 #*******************************************************************************
 
@@ -24,7 +23,7 @@ set hwTarget "localhost:3121/xilinx_tcf/${TRG_BOARD}"
 set TEST_1 0
 puts "hwTarget: $hwTarget"
 if {$TEST_1 == 1} {
-       puts "\n**************** TEST-1 (begin)"
+       puts "\n**************** \[XILINX_DEV_PGM:DEBUG\] TEST-1 (begin)"
        set hwTargets [get_hw_targets ]
        puts "---- hw targets:"
        set idx 0
@@ -32,7 +31,7 @@ if {$TEST_1 == 1} {
 	incr idx
 	puts "trg $idx: $trg" 
        }
-       puts "**************** TEST-1 (end)\n"
+       puts "**************** \[XILINX_DEV_PGM:DEBUG\] TEST-1 (end)\n"
 }
 #--- TEST-1 (end)
 #-----------------------------------
@@ -43,7 +42,7 @@ open_hw_target $hwTarget
 #--- TEST (begin)
 set TEST_2 0
 if {$TEST_2 == 1} {
-       puts "\n**************** TEST-2 (begin)"
+       puts "\n**************** \[XILINX_DEV_PGM:DEBUG\] TEST-2 (begin)"
        set hwDevices [get_hw_devices ]
        puts "---- hw devices (hw target: $hwTarget)"
        set idx 0
@@ -51,7 +50,7 @@ if {$TEST_2 == 1} {
 	incr idx
 	puts "dev $idx: $dev" 
        }
-       puts "**************** TEST-2 (end)\n"
+       puts "**************** \[XILINX_DEV_PGM:DEBUG\] TEST-2 (end)\n"
 }
 #--- TEST-2 (end)
 #-----------------------------------
@@ -69,10 +68,9 @@ close_hw
 
 #-----------------------------------
 if {$DEBUG_INFO == 1} {
-	puts "\[DEBUG\] \[xilinx_dev_pgm\]"
-	puts " TRG_BOARD:  $TRG_BOARD"
-	puts " TRG_DEVICE: $TRG_DEVICE"
-	puts " TRG_FILE:   $TRG_FILE"
+	puts "\[XILINX_DEV_PGM:DEBUG\] TRG_BOARD:  $TRG_BOARD"
+	puts "\[XILINX_DEV_PGM:DEBUG\] TRG_DEVICE: $TRG_DEVICE"
+	puts "\[XILINX_DEV_PGM:DEBUG\] TRG_FILE:   $TRG_FILE"
 }
 
 

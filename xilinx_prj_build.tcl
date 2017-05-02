@@ -4,9 +4,9 @@
 #------------------------------------------------------------------------------
 proc check_status { jobName } {
     if {[get_property PROGRESS [get_runs $jobName]] != "100%"} {
-        error "ERROR: $jobName failed"
+        error "\[XILINX_PRJ_BUILD:ERROR\] $jobName failed"
     } else {
-        puts "INFO: $jobName completed. Ok."
+        puts "\[XILINX_PRJ_BUILD:INFO\] $jobName completed. Ok."
     }	
 }
 
@@ -33,7 +33,7 @@ set implName  impl_1
 #--- TEST (begin)
 set TEST 0
 if {$TEST == 1} {
-       puts "\n**************** TEST (begin)"
+       puts "\n**************** \[XILINX_PRJ_BUILD:DEBUG\] TEST (begin)"
        set src1 [lsearch -inline [get_filesets ] sources_1]
        set cst1 [lsearch -inline [get_filesets ] constrs_1]
        set syn1 [lsearch -inline [get_runs ] $synthName]
@@ -45,7 +45,7 @@ if {$TEST == 1} {
        foreach prop [list_property $o1] {
 	puts "$prop: [get_property  $prop $o1]" 
        }
-       puts "**************** TEST (end)\n"
+       puts "**************** \[XILINX_PRJ_BUILD:DEBUG\] TEST (end)\n"
 }
 #--- TEST (end)
 
@@ -66,8 +66,7 @@ close_project
 
 #-----------------------------------
 if {$DEBUG_INFO == 1} {
-	puts "\[DEBUG\] \[xilinx_prj_build\]"
-	puts " OUT_CFG_DIR:      $OUT_CFG_DIR"
-	puts " PRJ_FILE_NAME:    $PRJ_FILE_NAME"
+	puts "\[XILINX_PRJ_BUILD:DEBUG\] OUT_CFG_DIR:      $OUT_CFG_DIR"
+	puts "\[XILINX_PRJ_BUILD:DEBUG\] PRJ_FILE_NAME:    $PRJ_FILE_NAME"
 }
 

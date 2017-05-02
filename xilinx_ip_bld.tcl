@@ -45,25 +45,28 @@ if { [file exists $ipCoreOutDir]} {
 	file delete -force $ipCoreOutDir	
 }
 
-file mkdir $ipCoreOutDir
 
 #-----------------------------------
 source $IP_CFG
 if { [dict get [ipInfo] isSynth] } {
+	file mkdir $ipCoreOutDir
 	ipGenPrologue ${ipCoreName} ${ipCoreOutDir} ${DEVICE} "ipInfo"
 	ipCfgPrologue ${ipCoreName} ${ipCoreOutDir}
 	ipUserCfg     ${ipCoreName} ${ipCoreOutDir} ${CFG_DIR}
 	ipGenEpilogue ${ipCoreName} ${ipCoreOutDir}
-
+	puts "\[XILINX_IP_BLD:INFO\] IP core ${ipCoreName} generated"
 } else {
+	if { ![info exists ipLibDir] } {
+		set ipLibDir ${IP_LIB_DIR}
+	}
+	file copy ${ipLibDir}/${ipCoreName} ${ipCoreOutDir}
+	puts "\[XILINX_IP_BLD:INFO\] IP core ${ipCoreName} copied from ${ipLibDir}"
 }
 
 #-----------------------------------
 if {$DEBUG_INFO == 1} {
-	puts "\[DEBUG\] \[xilinx_ip_bld\]"
-	puts "IP_CFG:           $IP_CFG"
-	puts "IP_OUT:           $IP_OUT"
-	puts "DEVICE:           $DEVICE"
-	puts "IP_LIB_DIR:       $IP_LIB_DIR"
+	puts "\[XILINX_IP_BLD:DEBUG\] IP_CFG:           $IP_CFG"
+	puts "\[XILINX_IP_BLD:DEBUG\] IP_OUT:           $IP_OUT"
+	puts "\[XILINX_IP_BLD:DEBUG\] DEVICE:           $DEVICE"
+	puts "\[XILINX_IP_BLD:DEBUG\] IP_LIB_DIR:       $IP_LIB_DIR"
 }
-

@@ -130,7 +130,7 @@ set ipLists [gen_ip_lists ${srcFileList}]
 
 foreach ip_xcix [dict get $ipLists xcix] {
 	read_ip $ip_xcix
-#	puts "ip_xcix: $ip_xcix"
+#	puts "\[XILINX_PRJ_GEN:DEBUG\] ip_xcix: $ip_xcix"
 }
 
 
@@ -145,7 +145,7 @@ cfg_header_gen $PRJ_NAME $CFG_DIR "VIVADO"
 #--- TEST (begin)
 set TEST 0
 if {$TEST == 1} {
-       puts "\n**************** TEST (begin)"
+       puts "\n**************** \[XILINX_PRJ_GEN:DEBUG\] TEST (begin)"
        set src1 [lsearch -inline [get_filesets ] sources_1]
        set cst1 [lsearch -inline [get_filesets ] constrs_1]
        set syn1 [lsearch -inline [get_runs ] synth_1]
@@ -157,7 +157,7 @@ if {$TEST == 1} {
        foreach prop [list_property $o1] {
 	puts "$prop: [get_property  $prop $o1]" 
        }
-       puts "**************** TEST (end)\n"
+       puts "**************** \[XILINX_PRJ_GEN:DEBUG\] TEST (end)\n"
 }
 #--- TEST (end)
 
@@ -166,12 +166,11 @@ close_project
 
 #-----------------------------------
 if {$DEBUG_INFO == 1} {
-	puts "\[DEBUG\] \[xilinx_prj_gen\]"
-	puts "SCRIPT_DIR:       $SCRIPT_DIR"
-	puts "SRC_DIR:          $SRC_DIR"
-	puts "OUT_CFG_DIR:      $OUT_CFG_DIR"
-	puts "PRJ_NAME:         $PRJ_NAME"
-	puts "TARGET_FILE_NAME: $TARGET_FILE_NAME"
-	puts "DEVICE:           $DEVICE"
+	puts "\[XILINX_PRJ_GEN:DEBUG\] SCRIPT_DIR:       $SCRIPT_DIR"
+	puts "\[XILINX_PRJ_GEN:DEBUG\] SRC_DIR:          $SRC_DIR"
+	puts "\[XILINX_PRJ_GEN:DEBUG\] OUT_CFG_DIR:      $OUT_CFG_DIR"
+	puts "\[XILINX_PRJ_GEN:DEBUG\] PRJ_NAME:         $PRJ_NAME"
+	puts "\[XILINX_PRJ_GEN:DEBUG\] TARGET_FILE_NAME: $TARGET_FILE_NAME"
+	puts "\[XILINX_PRJ_GEN:DEBUG\] DEVICE:           $DEVICE"
 }
 
