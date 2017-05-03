@@ -130,7 +130,12 @@ set ipLists [gen_ip_lists ${srcFileList}]
 
 foreach ip_xcix [dict get $ipLists xcix] {
 	read_ip $ip_xcix
-#	puts "\[XILINX_PRJ_GEN:DEBUG\] ip_xcix: $ip_xcix"
+	#puts "\[XILINX_PRJ_GEN:DEBUG\] ip_xcix: $ip_xcix"
+}
+
+foreach ip_xci [dict get $ipLists xci] {
+	read_ip $ip_xci
+	#puts "\[XILINX_PRJ_GEN:DEBUG\] ip_xci: $ip_xci"
 }
 
 

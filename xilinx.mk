@@ -3,7 +3,7 @@
 CFG_NAME        := $(notdir $(CURDIR))
 SCRIPT_DIR      := $(REF_DIR)/script
 BIN_DIR         := $(REF_DIR)/bin
-IP_LIB_DIR      := $(REF_DIR)/ip
+IP_LIB_DIR      := $(REF_DIR)/ip/xilinx
 
 OUT_DIR         := $(SRC_DIR)/-out
 OUT_CFG_DIR     := $(OUT_DIR)/$(CFG_NAME)
