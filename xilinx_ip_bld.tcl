@@ -53,6 +53,7 @@ if { [dict get [ipInfo] isSynth] } {
 	ipGenPrologue ${ipCoreName} ${ipCoreOutDir} ${DEVICE} "ipInfo"
 	ipCfgPrologue ${ipCoreName} ${ipCoreOutDir}
 	ipUserCfg     ${ipCoreName} ${ipCoreOutDir} ${CFG_DIR}
+	ipCfgEpilogue ${ipCoreName} ${ipCoreOutDir}
 	ipGenEpilogue ${ipCoreName} ${ipCoreOutDir}
 	puts "\[XILINX_IP_BLD:INFO\] IP core ${ipCoreName} generated"
 } else {

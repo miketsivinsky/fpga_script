@@ -52,7 +52,7 @@ DEV_PGM_CMD_LINE  := -mode batch -journal $(OUT_CFG_DIR)/$(PRJ_NAME)-pgm.jou -lo
 
 #---
 define ip_bld_cmd
- $(SHELL_DIR)/$(PRJ_SHELL) -mode batch -journal $(OUT_CFG_DIR)/$(PRJ_NAME)-ip-$(patsubst %.tcl,%,$(notdir $(1))).jou -log $(OUT_CFG_DIR)/$(PRJ_NAME)-ip$(patsubst %.tcl,%,$(notdir $(1))).log -source $(SCRIPT_DIR)/$(IP_BLD_SCRIPT) -notrace
+ $(SHELL_DIR)/$(PRJ_SHELL) -mode batch -journal $(OUT_CFG_DIR)/$(PRJ_NAME)-ip-$(patsubst %.tcl,%,$(notdir $(1))).jou -log $(OUT_CFG_DIR)/$(PRJ_NAME)-ip-$(patsubst %.tcl,%,$(notdir $(1))).log -source $(SCRIPT_DIR)/$(IP_BLD_SCRIPT) -notrace
 endef
 
 #------------------------------------------------------------------------------
