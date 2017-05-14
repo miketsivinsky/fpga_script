@@ -4,6 +4,7 @@ CFG_NAME        := $(notdir $(CURDIR))
 SCRIPT_DIR      := $(REF_DIR)/script
 BIN_DIR         := $(REF_DIR)/bin
 IP_LIB_DIR      := $(REF_DIR)/ip/xilinx
+LIB_DIR         := $(REF_DIR)/lib
 
 OUT_DIR         := $(SRC_DIR)/-out
 OUT_CFG_DIR     := $(OUT_DIR)/$(CFG_NAME)
@@ -34,6 +35,13 @@ ifeq ($(OS),Windows_NT)
  fixPath = $(subst /,\,$1)
 else
  fixPath = $1
+endif
+
+#------------------------------------------------------------------------------
+ifeq ($(LIB),)
+ SRC := $(SRC)
+else
+ SRC := $(SRC) $(LIB_DIR)/$(LIB)
 endif
 
 #------------------------------------------------------------------------------
@@ -120,8 +128,6 @@ print-%:
 
 test:
 	@echo test $(TARGET_FILE_NAME)	
-
-		
 
 #------------------------------------------------------------------------------
 $(TRG_FILE): $(OUT_FILE)
