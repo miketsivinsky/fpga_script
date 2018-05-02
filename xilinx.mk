@@ -18,24 +18,24 @@ OUT_GEN_SCRIPT := xilinx_prj_build.tcl
 DEV_PGM_SCRIPT := xilinx_dev_pgm.tcl
 
 #------------------------------------------------------------------------------
-SHELL_DIR          := D:/CAD/Xilinx/SDx/2016.3/Vivado/bin
+ifeq ($(OS),Windows_NT)
+ detected_OS := Windows
+else
+ detected_OS := $(shell sh -c 'uname -s 2>/dev/null || echo not')
+endif
 
-
-
-
-
-
+#------------------------------------------------------------------------------
+ifeq ($(detected_OS),Windows)
+ fixPath = $(subst /,\,$1)
+ SHELL_DIR := D:/CAD/Xilinx/SDx/2016.3/Vivado/bin
+else
+ fixPath = $1
+ SHELL_DIR := $(XILINX_VIVADO)/bin
+endif
 
 #------------------------------------------------------------------------------
 PRJ_SHELL  := vivado
 PGM_SHELL  := vivado
-
-#------------------------------------------------------------------------------
-ifeq ($(OS),Windows_NT)
- fixPath = $(subst /,\,$1)
-else
- fixPath = $1
-endif
 
 #------------------------------------------------------------------------------
 ifeq ($(LIB),)
@@ -104,10 +104,6 @@ OUT_IP     := $(abspath $(OUT_IP))
 
 all:    build_prj
 
-dev_pgm: $(TRG_FILE) $(CMD_DEPS_PRG)
-	@if exist $(OUT_CFG_DIR)\$(PRJ_NAME)-pgm* del /Q/ F $(OUT_CFG_DIR)\$(PRJ_NAME)-pgm*
-	$(SHELL_DIR)/$(PGM_SHELL) $(DEV_PGM_CMD_LINE) -tclargs $(TRG_BOARD) $(TRG_DEVICE) $(TRG_FILE)
-	@if exist .Xil rmdir /s/q .Xil
 
 build_prj:  $(TRG_FILE)
 
@@ -115,6 +111,17 @@ create_prj: $(PRJ_FILE)
 
 build_ip:   $(OUT_IP)
 
+
+#---- Windows impl
+ifeq ($(detected_OS),Windows)
+
+#---------------------------
+dev_pgm: $(TRG_FILE) $(CMD_DEPS_PRG)
+	@if exist $(OUT_CFG_DIR)\$(PRJ_NAME)-pgm* del /Q/ F $(OUT_CFG_DIR)\$(PRJ_NAME)-pgm*
+	$(SHELL_DIR)/$(PGM_SHELL) $(DEV_PGM_CMD_LINE) -tclargs $(TRG_BOARD) $(TRG_DEVICE) $(TRG_FILE)
+	@if exist .Xil rmdir /s/q .Xil
+
+#---------------------------
 clean:
 	@if exist $(OUT_CFG_DIR) rmdir /s/q $(OUT_CFG_DIR)	
 	@if exist $(TRG_FILE) del /F /Q $(TRG_FILE)
@@ -122,14 +129,8 @@ clean:
 clean_all:
 	@if exist $(OUT_DIR) rmdir /s/q $(OUT_DIR)	
 	@if exist $(BIN_DIR) rmdir /s/q $(BIN_DIR)	
-	       
-print-%:
-	@echo $* = $($*)
 
-test:
-	@echo test $(TARGET_FILE_NAME)	
-
-#------------------------------------------------------------------------------
+#---------------------------
 $(TRG_FILE): $(OUT_FILE)
 	@if not exist $(BIN_DIR) mkdir $(BIN_DIR)	
 	@if exist $(TRG_FILE) del /Q/ F $(TRG_FILE)	
@@ -140,17 +141,53 @@ $(OUT_FILE): $(PRJ_FILE) $(CMD_DEPS) $(CMD_DEPS_BLD) $(CMD_DEPS_PRJ)
 	@if exist $(OUT_CFG_DIR)\$(PRJ_NAME)-out* del /Q/ F $(OUT_CFG_DIR)\$(PRJ_NAME)-out*
 	$(SHELL_DIR)/$(PRJ_SHELL) $(OUT_FILE_CMD_LINE) -tclargs $(OUT_CFG_DIR) $(PRJ_FILE_NAME)
 
-$(PRJ_FILE): $(SRC_DEPS) $(CMD_DEPS) $(CMD_DEPS_PRJ) $(OUT_IP) | $(OUT_DIR)
-	$(SHELL_DIR)/$(PRJ_SHELL) $(PRJ_FILE_CMD_LINE) -tclargs $(SCRIPT_DIR) $(SRC_DIR) $(OUT_CFG_DIR) $(PRJ_NAME) $(TARGET_FILE_NAME) $(DEVICE) $(SRC) $(SDC) $(OUT_IP)
+#---- Unix impl
+else
+
+#---------------------------
+dev_pgm: $(TRG_FILE) $(CMD_DEPS_PRG)
+	rm -rf $(OUT_CFG_DIR)\$(PRJ_NAME)-pgm*
+	$(SHELL_DIR)/$(PGM_SHELL) $(DEV_PGM_CMD_LINE) -tclargs $(TRG_BOARD) $(TRG_DEVICE) $(TRG_FILE)
+	rm -rf .Xil
+
+#---------------------------
+clean:
+	rm -rf $(OUT_CFG_DIR) $(TRG_FILE)
+
+clean_all:
+	rm -rf $(OUT_DIR) $(BIN_DIR)
+
+#---------------------------
+$(TRG_FILE): $(OUT_FILE)
+	mkdir --parents $(BIN_DIR)
+	cp $(OUT_FILE) $(TRG_FILE)
+	rm -rf .Xil
+
+$(OUT_FILE): $(PRJ_FILE) $(CMD_DEPS) $(CMD_DEPS_BLD) $(CMD_DEPS_PRJ)
+	rm -rf $(OUT_CFG_DIR)\$(PRJ_NAME)-out*
+	$(SHELL_DIR)/$(PRJ_SHELL) $(OUT_FILE_CMD_LINE) -tclargs $(OUT_CFG_DIR) $(PRJ_FILE_NAME)
+
+endif
+	       
+#---------------------------
+print-%:
+	@echo $* = $($*)
+
+test:
+	@echo test $(TARGET_FILE_NAME)	
+
 
 .SECONDEXPANSION:
 PERCENT = %
 $(OUT_IP): % : $$(filter $$(PERCENT)$$(notdir $$*), $$(CFG_IP)).tcl | $(OUT_IP_DIR)
 	$(call ip_bld_cmd, $^ ) -tclargs $^ $@ $(DEVICE) $(IP_LIB_DIR)
 
-#------------------------------------------------------------------------------
+#---------------------------
 $(OUT_DIR):
 	mkdir $(OUT_DIR)	
+
+$(OUT_CFG_DIR):
+	mkdir $(OUT_CFG_DIR)	
 
 $(OUT_IP_DIR):
 	mkdir $(OUT_IP_DIR)
