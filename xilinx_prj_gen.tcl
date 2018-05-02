@@ -78,7 +78,7 @@ set SRC_DIR           [lindex $argv 1]
 set OUT_CFG_DIR       [lindex $argv 2]
 set PRJ_NAME          [lindex $argv 3]
 set TARGET_FILE_NAME  [lindex $argv 4]
-set DEVICE            [lindex $argv 5]
+#set DEVICE            [lindex $argv 5]
 
 #-----------------------------------
 prjClean ${OUT_CFG_DIR}
@@ -89,7 +89,7 @@ source $SCRIPT_DIR/cfg_header_gen.tcl
 set CFG_DIR [pwd]
 
 #-----------------------------------
-set srcFileListStart 6
+set srcFileListStart 5
 set srcFileNum [expr $argc - $srcFileListStart]
 set srcFileList [lrange $argv $srcFileListStart end]
 
@@ -98,6 +98,8 @@ set srcFileList [lrange $argv $srcFileListStart end]
 #-----------------------------------
 create_project ${TARGET_FILE_NAME} [file normalize ${OUT_CFG_DIR}] 
 gen_prj_struct ${PRJ_NAME}
+
+puts ${TARGET_FILE_NAME}
 
 #-----------------------------------
 
@@ -140,11 +142,12 @@ foreach ip_xci [dict get $ipLists xci] {
 
 
 #-----------------------------------
-set_property part ${DEVICE} [current_project]
+#set_property part ${DEVICE} [current_project]
 source ${CFG_DIR}/settings.tcl
 
 #-----------------------------------
 cfg_header_gen $PRJ_NAME $CFG_DIR "VIVADO"
+
 
 #-----------------------------------
 #--- TEST (begin)
@@ -176,6 +179,6 @@ if {$DEBUG_INFO == 1} {
 	puts "\[XILINX_PRJ_GEN:DEBUG\] OUT_CFG_DIR:      $OUT_CFG_DIR"
 	puts "\[XILINX_PRJ_GEN:DEBUG\] PRJ_NAME:         $PRJ_NAME"
 	puts "\[XILINX_PRJ_GEN:DEBUG\] TARGET_FILE_NAME: $TARGET_FILE_NAME"
-	puts "\[XILINX_PRJ_GEN:DEBUG\] DEVICE:           $DEVICE"
+#	puts "\[XILINX_PRJ_GEN:DEBUG\] DEVICE:           $DEVICE"
 }
 
