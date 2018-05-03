@@ -141,6 +141,10 @@ $(OUT_FILE): $(PRJ_FILE) $(CMD_DEPS) $(CMD_DEPS_BLD) $(CMD_DEPS_PRJ)
 	@if exist $(OUT_CFG_DIR)\$(PRJ_NAME)-out* del /Q/ F $(OUT_CFG_DIR)\$(PRJ_NAME)-out*
 	$(SHELL_DIR)/$(PRJ_SHELL) $(OUT_FILE_CMD_LINE) -tclargs $(OUT_CFG_DIR) $(PRJ_FILE_NAME)
 
+#---------------------------
+$(OUT_IP_DIR):
+	mkdir $(OUT_IP_DIR)
+
 #---- Unix impl
 else
 
@@ -167,6 +171,10 @@ $(OUT_FILE): $(PRJ_FILE) $(CMD_DEPS) $(CMD_DEPS_BLD) $(CMD_DEPS_PRJ)
 	rm -rf $(OUT_CFG_DIR)\$(PRJ_NAME)-out*
 	$(SHELL_DIR)/$(PRJ_SHELL) $(OUT_FILE_CMD_LINE) -tclargs $(OUT_CFG_DIR) $(PRJ_FILE_NAME)
 
+#---------------------------
+$(OUT_IP_DIR):
+	mkdir --parents $(OUT_IP_DIR)
+
 endif
 	       
 #---------------------------
@@ -191,8 +199,5 @@ $(OUT_DIR):
 
 $(OUT_CFG_DIR):
 	mkdir $(OUT_CFG_DIR)	
-
-$(OUT_IP_DIR):
-	mkdir $(OUT_IP_DIR)
 
 
