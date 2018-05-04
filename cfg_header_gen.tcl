@@ -39,7 +39,6 @@ proc cfg_header_gen {PRJ_NAME CFG_DIR BUILD_TOOL} {
 
 	#-----------------------------------
 	if {$DEBUG_INFO == 1} {
-		puts "\[DEBUG\] \[altera_cfg_gen\]"
-		puts " CFG_DIR:     $CFG_DIR"
+		puts "\[CFG_HEADER_GEN:DEBUG\] CFG_DIR: $CFG_DIR"
 	}
 }
