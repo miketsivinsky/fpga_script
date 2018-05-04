@@ -40,23 +40,33 @@ proc gen_ip_lists { srcFileList }  {
 }
 
 #------------------------------------------------------------------------------
-proc gen_prj_struct { prjName } {
-    set nRuns 1
+proc gen_prj_struct { prjName targetFileName device } {
+    set nRuns 2
+    set cfgDir [pwd]
+    set defSynthFlow "Vivado Synthesis 2018"
+    set defImplFlow  "Vivado Implementation 2017"
+
     for {set i 1} { $i <= $nRuns} { incr i} {
        #---
        if {[lsearch [get_filesets ] constrs_${i}] == -1} {
            create_fileset -constrset constrs_${i}
+	   #for test only: in future will be like ${targetFileName}-${i}.xdc
+       	   add_files -fileset constrs_${i} -norecurse ${cfgDir}/${targetFileName}.sdc ${cfgDir}/${targetFileName}.xdc 
        }
-#       add_files -fileset constrs_${i} -norecurse src/${prjName}-${i}.xdc
 
        #---
        if {[lsearch [get_runs ] synth_${i}] == -1} {
-           create_run synth_${i} -constrset constrs_${i} -flow {Vivado Synthesis 2016}
+           create_run synth_${i} -constrset constrs_${i} -part ${device} -flow ${defSynthFlow}
+	   set_property SRCSET sources_1 [get_runs synth_${i}]
+       } else {
+	   set_property FLOW ${defSynthFlow} [get_runs synth_${i}]
        }
 
        #---
        if {[lsearch [get_runs ] impl_${i}] == -1} {
-           create_run impl_${i} -parent_run synth_${i} -flow {Vivado Implementation 2016}
+           create_run impl_${i} -parent_run synth_${i} -flow ${defImplFlow}
+       } else {
+	   set_property FLOW ${defImplFlow} [get_runs impl_${i}]
        }
     }
 }
@@ -97,9 +107,11 @@ set srcFileList [lrange $argv $srcFileListStart end]
 
 #-----------------------------------
 create_project ${TARGET_FILE_NAME} [file normalize ${OUT_CFG_DIR}] 
-gen_prj_struct ${PRJ_NAME}
 
-puts ${TARGET_FILE_NAME}
+#puts "get_filesets: [get_filesets ]"
+#puts "get_runs:     [get_runs ]"
+
+gen_prj_struct ${PRJ_NAME} ${TARGET_FILE_NAME} ${DEVICE}
 
 #-----------------------------------
 
