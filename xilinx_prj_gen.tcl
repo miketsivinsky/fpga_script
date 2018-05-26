@@ -103,7 +103,8 @@ set srcFileListStart 6
 set srcFileNum [expr $argc - $srcFileListStart]
 set srcFileList [lrange $argv $srcFileListStart end]
 
-#---
+#-----------------------------------
+cfg_header_gen $PRJ_NAME $CFG_DIR "VIVADO"
 
 #-----------------------------------
 create_project ${TARGET_FILE_NAME} [file normalize ${OUT_CFG_DIR}] 
@@ -156,10 +157,6 @@ foreach ip_xci [dict get $ipLists xci] {
 #-----------------------------------
 set_property part ${DEVICE} [current_project]
 source ${CFG_DIR}/settings.tcl
-
-#-----------------------------------
-cfg_header_gen $PRJ_NAME $CFG_DIR "VIVADO"
-
 
 #-----------------------------------
 #--- TEST (begin)
