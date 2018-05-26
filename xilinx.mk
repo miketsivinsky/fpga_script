@@ -6,7 +6,7 @@ BIN_DIR         := $(REF_DIR)/bin
 IP_LIB_DIR      := $(REF_DIR)/ip/xilinx
 LIB_DIR         := $(REF_DIR)/lib
 
-OUT_DIR         := $(SRC_DIR)/.out
+OUT_DIR         := $(SYN_DIR)/.out
 OUT_CFG_DIR     := $(OUT_DIR)/$(CFG_NAME)
 OUT_IP_DIR      := $(OUT_CFG_DIR)/.ip
 
