@@ -89,6 +89,7 @@ set OUT_CFG_DIR       [lindex $argv 2]
 set PRJ_NAME          [lindex $argv 3]
 set TARGET_FILE_NAME  [lindex $argv 4]
 set DEVICE            [lindex $argv 5]
+set BUILD_TOOL        [lindex $argv 6]
 
 #-----------------------------------
 prjClean ${OUT_CFG_DIR}
@@ -99,12 +100,12 @@ source $SCRIPT_DIR/cfg_header_gen.tcl
 set CFG_DIR [pwd]
 
 #-----------------------------------
-set srcFileListStart 6
+set srcFileListStart 7
 set srcFileNum [expr $argc - $srcFileListStart]
 set srcFileList [lrange $argv $srcFileListStart end]
 
 #-----------------------------------
-cfg_header_gen $PRJ_NAME $CFG_DIR "VIVADO"
+cfg_header_gen $PRJ_NAME $CFG_DIR $BUILD_TOOL
 
 #-----------------------------------
 create_project ${TARGET_FILE_NAME} [file normalize ${OUT_CFG_DIR}] 
