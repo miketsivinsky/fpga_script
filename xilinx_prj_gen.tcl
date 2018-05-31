@@ -119,27 +119,27 @@ gen_prj_struct ${PRJ_NAME} ${TARGET_FILE_NAME} ${DEVICE}
 
 #--- SystemVerilog file list
 set src_sv [lsearch -all -inline $srcFileList $sfx_sv]
-foreach src $src_sv {
-	add_files -scan_for_includes $src
+if { [expr [llength $src_sv]] > 0 } {
+	add_files -scan_for_includes $src_sv
 } 
 
 #--- Verilog file list
 set src_v  [lsearch -all -inline $srcFileList $sfx_v]
-foreach src $src_v {
-	add_files -scan_for_includes $src
-} 
+if { [expr [llength $src_v]] > 0 } {
+	add_files -scan_for_includes $src_v
+}
 
 #--- SDC file list
 set src_sdc  [lsearch -all -inline $srcFileList $sfx_sdc]
-foreach src $src_sdc {
-	add_files -fileset constrs_1 -norecurse $src
-} 
+if { [expr [llength $src_sdc]] > 0 } {
+	add_files -fileset constrs_1 -norecurs $src_sdc
+}
 
 #--- XDC file list
 set src_xdc  [lsearch -all -inline $srcFileList $sfx_xdc]
-foreach src $src_xdc {
-	add_files -fileset constrs_1 -norecurse $src
-} 
+if { [expr [llength $src_xdc]] > 0 } {
+	add_files -fileset constrs_1 -norecurs $src_xdc
+}
 
 #--- IP and BD files
 set ipLists [gen_ip_lists ${srcFileList}]
