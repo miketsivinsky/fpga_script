@@ -1,5 +1,20 @@
 #*******************************************************************************
 #*******************************************************************************
+
+#------------------------------------------------------------------------------
+proc addSrcFiles { srcFileList incDir } {
+	upvar 1 incDir resIncDir
+	if { [expr [llength $srcFileList]] > 0 } {
+		add_files -scan_for_includes $srcFileList
+		foreach item $srcFileList {
+			set item [file dirname $item]
+			if { $item ni $resIncDir } {
+				lappend resIncDir $item
+			}
+		}
+	}
+}	
+
 #------------------------------------------------------------------------------
 proc prjClean { outCfgDir } {
 	if {[file exists ${outCfgDir}]} {
@@ -94,6 +109,7 @@ set BUILD_TOOL        [lindex $argv 6]
 #-----------------------------------
 prjClean ${OUT_CFG_DIR}
 
+#-----------------------------------
 source $SCRIPT_DIR/cfg_header_gen.tcl
 
 #-----------------------------------
@@ -103,6 +119,11 @@ set CFG_DIR [pwd]
 set srcFileListStart 7
 set srcFileNum [expr $argc - $srcFileListStart]
 set srcFileList [lrange $argv $srcFileListStart end]
+
+set src_sv  [lsearch -all -inline $srcFileList $sfx_sv]  
+set src_v   [lsearch -all -inline $srcFileList $sfx_v]   
+set src_sdc [lsearch -all -inline $srcFileList $sfx_sdc] 
+set src_xdc [lsearch -all -inline $srcFileList $sfx_xdc] 
 
 #-----------------------------------
 cfg_header_gen $PRJ_NAME $CFG_DIR $BUILD_TOOL
@@ -116,27 +137,20 @@ create_project ${TARGET_FILE_NAME} [file normalize ${OUT_CFG_DIR}]
 gen_prj_struct ${PRJ_NAME} ${TARGET_FILE_NAME} ${DEVICE}
 
 #-----------------------------------
+set incDir {}
 
-#--- SystemVerilog file list
-set src_sv [lsearch -all -inline $srcFileList $sfx_sv]
-if { [expr [llength $src_sv]] > 0 } {
-	add_files -scan_for_includes $src_sv
-} 
+#--- add SV files and make incDir
+addSrcFiles ${src_sv} ${incDir}
 
-#--- Verilog file list
-set src_v  [lsearch -all -inline $srcFileList $sfx_v]
-if { [expr [llength $src_v]] > 0 } {
-	add_files -scan_for_includes $src_v
-}
+#--- add Verilog files and make incDir
+addSrcFiles ${src_v} ${incDir}
 
-#--- SDC file list
-set src_sdc  [lsearch -all -inline $srcFileList $sfx_sdc]
+#--- add SDC files
 if { [expr [llength $src_sdc]] > 0 } {
 	add_files -fileset constrs_1 -norecurs $src_sdc
 }
 
-#--- XDC file list
-set src_xdc  [lsearch -all -inline $srcFileList $sfx_xdc]
+#--- add XDC files
 if { [expr [llength $src_xdc]] > 0 } {
 	add_files -fileset constrs_1 -norecurs $src_xdc
 }
@@ -144,16 +158,17 @@ if { [expr [llength $src_xdc]] > 0 } {
 #--- IP and BD files
 set ipLists [gen_ip_lists ${srcFileList}]
 
+#--- add xcix files
 foreach ip_xcix [dict get $ipLists xcix] {
 	read_ip $ip_xcix
 	#puts "\[XILINX_PRJ_GEN:DEBUG\] ip_xcix: $ip_xcix"
 }
 
+#--- add xci files
 foreach ip_xci [dict get $ipLists xci] {
 	read_ip $ip_xci
 	#puts "\[XILINX_PRJ_GEN:DEBUG\] ip_xci: $ip_xci"
 }
-
 
 #-----------------------------------
 set_property part ${DEVICE} [current_project]
