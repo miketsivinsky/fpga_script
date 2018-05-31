@@ -230,21 +230,27 @@ proc c { } {
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
-proc s { } {
+proc s { { wave_ena 1 } } {
  global WaveFileName;
  SimBegin;
 
- do $WaveFileName
+ if { $wave_ena != 0} {
+	do $WaveFileName
+ }
  run -all
- view wave
+ if { $wave_ena != 0} {
+	view wave
+ }
 }
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
-proc r { } {
+proc r { { wave_ena 1 } } {
  restart -force
  run -all
- view wave
+ if { $wave_ena != 0} {
+	view wave
+ }
  view transcript
 }
 
