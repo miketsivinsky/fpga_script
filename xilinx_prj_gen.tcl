@@ -104,7 +104,8 @@ set OUT_CFG_DIR       [lindex $argv 2]
 set PRJ_NAME          [lindex $argv 3]
 set TARGET_FILE_NAME  [lindex $argv 4]
 set DEVICE            [lindex $argv 5]
-set BUILD_TOOL        [lindex $argv 6]
+set LIB_DIR           [lindex $argv 6]
+set BUILD_TOOL        [lindex $argv 7]
 
 #-----------------------------------
 prjClean ${OUT_CFG_DIR}
@@ -116,7 +117,7 @@ source $SCRIPT_DIR/cfg_header_gen.tcl
 set CFG_DIR [pwd]
 
 #-----------------------------------
-set srcFileListStart 7
+set srcFileListStart 8
 set srcFileNum [expr $argc - $srcFileListStart]
 set srcFileList [lrange $argv $srcFileListStart end]
 
@@ -172,6 +173,8 @@ foreach ip_xci [dict get $ipLists xci] {
 
 #-----------------------------------
 set_property part ${DEVICE} [current_project]
+set_property include_dirs [lappend  incDir $LIB_DIR] [get_filesets sources_1]
+
 source ${CFG_DIR}/settings.tcl
 
 #-----------------------------------
@@ -205,5 +208,7 @@ if {$DEBUG_INFO == 1} {
 	puts "\[XILINX_PRJ_GEN:DEBUG\] PRJ_NAME:         $PRJ_NAME"
 	puts "\[XILINX_PRJ_GEN:DEBUG\] TARGET_FILE_NAME: $TARGET_FILE_NAME"
 	puts "\[XILINX_PRJ_GEN:DEBUG\] DEVICE:           $DEVICE"
+	puts "\[XILINX_PRJ_GEN:DEBUG\] LIB_DIR:          $LIB_DIR"
+	puts "\[XILINX_PRJ_GEN:DEBUG\] BUILD_TOOL:       $BUILD_TOOL"
 }
 

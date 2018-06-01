@@ -47,6 +47,7 @@ endif
 #------------------------------------------------------------------------------
 IP_LIB_DIR      := $(abspath $(IP_LIB_DIR))
 SRC_DIR         := $(abspath $(SRC_DIR))
+LIB_DIR         := $(abspath $(LIB_DIR))
 OUT_DIR         := $(call fixPath, $(OUT_DIR))
 OUT_CFG_DIR     := $(call fixPath, $(OUT_CFG_DIR))
 OUT_IP_DIR      := $(call fixPath, $(OUT_IP_DIR))
@@ -186,7 +187,7 @@ test:
 
 #---------------------------
 $(PRJ_FILE): $(SRC_DEPS) $(CMD_DEPS) $(CMD_DEPS_PRJ) $(OUT_IP) | $(OUT_DIR) $(OUT_CFG_DIR)
-	$(SHELL_DIR)/$(PRJ_SHELL) $(PRJ_FILE_CMD_LINE) -tclargs $(SCRIPT_DIR) $(SRC_DIR) $(OUT_CFG_DIR) $(PRJ_NAME) $(TARGET_FILE_NAME) $(DEVICE) $(BUILD_TOOL) $(SRC) $(SDC) $(OUT_IP)
+	$(SHELL_DIR)/$(PRJ_SHELL) $(PRJ_FILE_CMD_LINE) -tclargs $(SCRIPT_DIR) $(SRC_DIR) $(OUT_CFG_DIR) $(PRJ_NAME) $(TARGET_FILE_NAME) $(DEVICE) $(LIB_DIR) $(BUILD_TOOL) $(SRC) $(SDC) $(OUT_IP)
 
 .SECONDEXPANSION:
 PERCENT = %
