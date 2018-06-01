@@ -183,12 +183,12 @@ foreach ip_xci [dict get $ipLists xci] {
 #-----------------------------------
 set_property part ${DEVICE} [current_project]
 set_property include_dirs [lappend  incDir $LIB_DIR] [get_filesets sources_1]
+set_property top ${PRJ_NAME} [get_filesets sources_1]
 
 #-----------------------------------
 if {[file exists ${CFG_DIR}/${SETTINGS_SCRIPT}] == 1} {
 	source ${CFG_DIR}/${SETTINGS_SCRIPT}
 }
-
 
 #-----------------------------------
 #--- TEST (begin)
