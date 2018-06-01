@@ -107,6 +107,10 @@ set DEVICE            [lindex $argv 5]
 set LIB_DIR           [lindex $argv 6]
 set BUILD_TOOL        [lindex $argv 7]
 
+set PROLOGUE_SCRIPT   "prologue.tcl"
+set SETTINGS_SCRIPT   "settings.tcl"
+set EPILOGUE_SCRIPT   "epilogue.tcl"
+
 #-----------------------------------
 prjClean ${OUT_CFG_DIR}
 
@@ -128,6 +132,11 @@ set src_xdc [lsearch -all -inline $srcFileList $sfx_xdc]
 
 #-----------------------------------
 cfg_header_gen $PRJ_NAME $CFG_DIR $BUILD_TOOL
+
+#-----------------------------------
+if {[file exists ${CFG_DIR}/${PROLOGUE_SCRIPT}] == 1} {
+	source ${CFG_DIR}/${PROLOGUE_SCRIPT}
+}
 
 #-----------------------------------
 create_project ${TARGET_FILE_NAME} [file normalize ${OUT_CFG_DIR}] 
@@ -175,7 +184,11 @@ foreach ip_xci [dict get $ipLists xci] {
 set_property part ${DEVICE} [current_project]
 set_property include_dirs [lappend  incDir $LIB_DIR] [get_filesets sources_1]
 
-source ${CFG_DIR}/settings.tcl
+#-----------------------------------
+if {[file exists ${CFG_DIR}/${SETTINGS_SCRIPT}] == 1} {
+	source ${CFG_DIR}/${SETTINGS_SCRIPT}
+}
+
 
 #-----------------------------------
 #--- TEST (begin)
@@ -199,6 +212,11 @@ if {$TEST == 1} {
 
 #-----------------------------------
 close_project
+
+#-----------------------------------
+if {[file exists ${CFG_DIR}/${EPILOGUE_SCRIPT}] == 1} {
+	source ${CFG_DIR}/${EPILOGUE_SCRIPT}
+}
 
 #-----------------------------------
 if {$DEBUG_INFO == 1} {
