@@ -262,6 +262,10 @@ proc r { { wave_ena 1 } } {
 #-----------------------------------
 GenCfgFile ${CFG_DIR} ${SCRIPT_DIR} PRJ_NAME BUILD_TOOL
 
+#-----------------------------------
+if {[file exists ${CFG_DIR}/${PROLOGUE_SCRIPT}] == 1} {
+	source ${CFG_DIR}/${PROLOGUE_SCRIPT}
+}
 
 if {$argc > 0} {
  set cmd_arg [lindex $argv 0];
