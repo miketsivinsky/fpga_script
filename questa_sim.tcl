@@ -99,8 +99,10 @@ append vsim_flags " " $OptimizedDesignName;
 #puts $vsim_flags
 
 #-------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------
-proc GenCfgFile { CfgDir ScriptDir } {
+proc GenCfgFile { CfgDir ScriptDir PrjName BuildTool } {
+	upvar 1 $PrjName  prjName
+	upvar 1 $BuildTool buildTool
+	
 	set cfgMakeFile [open [set fileName "$CfgDir/makefile"] r]
 	while {[gets $cfgMakeFile line] > -1} {
 		if {[regexp {^PRJ_NAME} $line]}  {
