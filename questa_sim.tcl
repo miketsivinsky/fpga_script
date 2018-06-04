@@ -181,7 +181,7 @@ proc LaunchCmd { Cmd Args } {
 
 #-------------------------------------------------------------------------------
 proc Compile {} {
- global RootDir SrcDirs;
+ global REF_DIR SrcDirs;
 
  global VSV_FileList;
  global VHDL_FileList;
@@ -190,7 +190,7 @@ proc Compile {} {
  global vcom_cmd vcom_flags;
  global vopt_cmd vopt_flags;
 
- BuildSrcList $RootDir $SrcDirs;
+ BuildSrcList ${REF_DIR} ${SrcDirs};
 
  if { [file exists $VSV_FileList] } {
   if {[LaunchCmd $vlog_cmd $vlog_flags] == 0} {
