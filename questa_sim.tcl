@@ -6,13 +6,22 @@
 #     Prj Sctructure Settings
 #-------------------------------------------------------------------------------
 
+#-------------------------------------------------------------------------------
+set CFG_DIR         "${REF_DIR}/prj/syn/${CfgName}"
+
+set PROLOGUE_SCRIPT "prologue.tcl"
+
 set WaveFileName    ${DesignName} 
 append WaveFileName "_wave.do"
 
-set SrcDirs [list $Src $Lib $Sim];
+set SRC_DIR  ${Src}
+set SrcDirs $SRC_DIR
+lappend SrcDirs $Lib $Sim
 
-set IncDirs [join $SrcDirs "+"];
-append IncDirs "+$CfgDir"
+set IncDirs [join [list [join ${SrcDirs} "+"] ${CFG_DIR}] "+"]
+
+set PRJ_NAME   {}
+set BUILD_TOOL {}
 
 set VSV_FileList  vsv_src_files.fv;
 set VHDL_FileList vhdl_src_files.fv;
