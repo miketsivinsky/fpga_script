@@ -1,5 +1,20 @@
 #*******************************************************************************
 #*******************************************************************************
+
+#------------------------------------------------------------------------------
+proc addSrcFiles { srcFileList incDir } {
+	upvar 1 incDir resIncDir
+	if { [expr [llength $srcFileList]] > 0 } {
+		add_files -scan_for_includes $srcFileList
+		foreach item $srcFileList {
+			set item [file dirname $item]
+			if { $item ni $resIncDir } {
+				lappend resIncDir $item
+			}
+		}
+	}
+}	
+
 #------------------------------------------------------------------------------
 proc prjClean { outCfgDir } {
 	if {[file exists ${outCfgDir}]} {
@@ -89,21 +104,39 @@ set OUT_CFG_DIR       [lindex $argv 2]
 set PRJ_NAME          [lindex $argv 3]
 set TARGET_FILE_NAME  [lindex $argv 4]
 set DEVICE            [lindex $argv 5]
+set LIB_DIR           [lindex $argv 6]
+set BUILD_TOOL        [lindex $argv 7]
+
+set PROLOGUE_SCRIPT   "prologue.tcl"
+set SETTINGS_SCRIPT   "settings.tcl"
+set EPILOGUE_SCRIPT   "epilogue.tcl"
 
 #-----------------------------------
 prjClean ${OUT_CFG_DIR}
 
+#-----------------------------------
 source $SCRIPT_DIR/cfg_header_gen.tcl
 
 #-----------------------------------
 set CFG_DIR [pwd]
 
 #-----------------------------------
-set srcFileListStart 6
+set srcFileListStart 8
 set srcFileNum [expr $argc - $srcFileListStart]
 set srcFileList [lrange $argv $srcFileListStart end]
 
-#---
+set src_sv  [lsearch -all -inline $srcFileList $sfx_sv]  
+set src_v   [lsearch -all -inline $srcFileList $sfx_v]   
+set src_sdc [lsearch -all -inline $srcFileList $sfx_sdc] 
+set src_xdc [lsearch -all -inline $srcFileList $sfx_xdc] 
+
+#-----------------------------------
+cfg_header_gen $PRJ_NAME $CFG_DIR $BUILD_TOOL
+
+#-----------------------------------
+if {[file exists ${CFG_DIR}/${PROLOGUE_SCRIPT}] == 1} {
+	source ${CFG_DIR}/${PROLOGUE_SCRIPT}
+}
 
 #-----------------------------------
 create_project ${TARGET_FILE_NAME} [file normalize ${OUT_CFG_DIR}] 
@@ -114,52 +147,48 @@ create_project ${TARGET_FILE_NAME} [file normalize ${OUT_CFG_DIR}]
 gen_prj_struct ${PRJ_NAME} ${TARGET_FILE_NAME} ${DEVICE}
 
 #-----------------------------------
+set incDir {}
 
-#--- SystemVerilog file list
-set src_sv [lsearch -all -inline $srcFileList $sfx_sv]
-foreach src $src_sv {
-	add_files -scan_for_includes $src
-} 
+#--- add SV files and make incDir
+addSrcFiles ${src_sv} ${incDir}
 
-#--- Verilog file list
-set src_v  [lsearch -all -inline $srcFileList $sfx_v]
-foreach src $src_v {
-	add_files -scan_for_includes $src
-} 
+#--- add Verilog files and make incDir
+addSrcFiles ${src_v} ${incDir}
 
-#--- SDC file list
-set src_sdc  [lsearch -all -inline $srcFileList $sfx_sdc]
-foreach src $src_sdc {
-	add_files -fileset constrs_1 -norecurse $src
-} 
+#--- add SDC files
+if { [expr [llength $src_sdc]] > 0 } {
+	add_files -fileset constrs_1 -norecurs $src_sdc
+}
 
-#--- XDC file list
-set src_xdc  [lsearch -all -inline $srcFileList $sfx_xdc]
-foreach src $src_xdc {
-	add_files -fileset constrs_1 -norecurse $src
-} 
+#--- add XDC files
+if { [expr [llength $src_xdc]] > 0 } {
+	add_files -fileset constrs_1 -norecurs $src_xdc
+}
 
 #--- IP and BD files
 set ipLists [gen_ip_lists ${srcFileList}]
 
+#--- add xcix files
 foreach ip_xcix [dict get $ipLists xcix] {
 	read_ip $ip_xcix
 	#puts "\[XILINX_PRJ_GEN:DEBUG\] ip_xcix: $ip_xcix"
 }
 
+#--- add xci files
 foreach ip_xci [dict get $ipLists xci] {
 	read_ip $ip_xci
 	#puts "\[XILINX_PRJ_GEN:DEBUG\] ip_xci: $ip_xci"
 }
 
-
 #-----------------------------------
 set_property part ${DEVICE} [current_project]
-source ${CFG_DIR}/settings.tcl
+set_property include_dirs [lappend  incDir $LIB_DIR] [get_filesets sources_1]
+set_property top ${PRJ_NAME} [get_filesets sources_1]
 
 #-----------------------------------
-cfg_header_gen $PRJ_NAME $CFG_DIR "VIVADO"
-
+if {[file exists ${CFG_DIR}/${SETTINGS_SCRIPT}] == 1} {
+	source ${CFG_DIR}/${SETTINGS_SCRIPT}
+}
 
 #-----------------------------------
 #--- TEST (begin)
@@ -185,6 +214,11 @@ if {$TEST == 1} {
 close_project
 
 #-----------------------------------
+if {[file exists ${CFG_DIR}/${EPILOGUE_SCRIPT}] == 1} {
+	source ${CFG_DIR}/${EPILOGUE_SCRIPT}
+}
+
+#-----------------------------------
 if {$DEBUG_INFO == 1} {
 	puts "\[XILINX_PRJ_GEN:DEBUG\] SCRIPT_DIR:       $SCRIPT_DIR"
 	puts "\[XILINX_PRJ_GEN:DEBUG\] SRC_DIR:          $SRC_DIR"
@@ -192,5 +226,7 @@ if {$DEBUG_INFO == 1} {
 	puts "\[XILINX_PRJ_GEN:DEBUG\] PRJ_NAME:         $PRJ_NAME"
 	puts "\[XILINX_PRJ_GEN:DEBUG\] TARGET_FILE_NAME: $TARGET_FILE_NAME"
 	puts "\[XILINX_PRJ_GEN:DEBUG\] DEVICE:           $DEVICE"
+	puts "\[XILINX_PRJ_GEN:DEBUG\] LIB_DIR:          $LIB_DIR"
+	puts "\[XILINX_PRJ_GEN:DEBUG\] BUILD_TOOL:       $BUILD_TOOL"
 }
 
