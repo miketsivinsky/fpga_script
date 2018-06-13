@@ -1,5 +1,6 @@
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
+CFG_DIR         := $(CURDIR)
 CFG_NAME        := $(notdir $(CURDIR))
 SCRIPT_DIR      := $(REF_DIR)/script
 BIN_DIR         := $(REF_DIR)/bin
@@ -126,6 +127,9 @@ dev_pgm: $(TRG_FILE) $(CMD_DEPS_PRG)
 clean:
 	@if exist $(OUT_CFG_DIR) rmdir /s/q $(OUT_CFG_DIR)	
 	@if exist $(TRG_FILE) del /F /Q $(TRG_FILE)
+	@if exist $(CFG_DIR)/.Xil rmdir /s/q $(CFG_DIR)/.Xil
+	@if exist $(CFG_DIR)/*.jou del /F /Q $(CFG_DIR)/*.jou
+	@if exist $(CFG_DIR)/*.log del /F /Q $(CFG_DIR)/*.log
 
 clean_all:
 	@if exist $(OUT_DIR) rmdir /s/q $(OUT_DIR)	
@@ -157,7 +161,7 @@ dev_pgm: $(TRG_FILE) $(CMD_DEPS_PRG)
 
 #---------------------------
 clean:
-	rm -rf $(OUT_CFG_DIR) $(TRG_FILE)
+	rm -rf $(OUT_CFG_DIR) $(TRG_FILE) $(CFG_DIR)/.Xil $(CFG_DIR)/*jou $(CFG_DIR)/*log
 
 clean_all:
 	rm -rf $(OUT_DIR) $(BIN_DIR)
