@@ -59,7 +59,7 @@ proc gen_prj_struct { prjName targetFileName device } {
     set nRuns 2
     set cfgDir [pwd]
     set defSynthFlow "Vivado Synthesis 2018"
-    set defImplFlow  "Vivado Implementation 2017"
+    set defImplFlow  "Vivado Implementation 2018"
 
     for {set i 1} { $i <= $nRuns} { incr i} {
        #---
